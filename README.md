@@ -64,8 +64,8 @@ python(3) main.py --release <release> --species <species>
 
 The you be informed of the location of the downloaded files and the output files, but generally they can be found here:
 
-Downloaded: `~/temp-ftp-downloads/`
-Output: `~/ensembl-ftp-etl-output/`
+* Downloaded: `~/temp-ftp-downloads/`
+* Output: `~/ensembl-ftp-etl-output/`
 
 ## Configuration
 
