@@ -171,7 +171,9 @@ def transformation_recursion(
             raw_data = read_gtf_file(file_path)
             extracted_data = extract_key_attributes(raw_data)
             transformed_data = transform_data(extracted_data)
-            out_file_path = os.path.join(output_folder, filename[:-4] + ".tsv")
+            out_file_path = os.path.join(
+                output_folder, filename[:-4] + ".gene_info.tsv"
+            )
             os.makedirs(output_folder, exist_ok=True)
             transformed_data.to_csv(
                 out_file_path, sep="\t", header=True, index=False
