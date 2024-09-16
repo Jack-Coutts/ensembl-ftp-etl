@@ -12,6 +12,11 @@ default_ensembl_ftp_url = (
 temp_download_folder = os.path.abspath(
     os.path.expanduser("~/temp-ftp-downloads/")
 )
+output_folder = os.path.abspath(
+    os.path.expanduser("~/ensemble-ftp-etl-output/")
+)
+
+"""Functions"""
 
 
 def download_gtf_files(release: str | int, species: str):
@@ -117,8 +122,28 @@ def transform_data(gene_data: pd.DataFrame) -> pd.DataFrame:
     output_df = gene_data.loc[
         :, ["gene_id", "feature", "gene_biotype", "seqname", "source"]
     ]
-
     return output_df
+
+
+def transformation_recursion(
+    dir: str | os.PathLike, ouput_file_path: str | os.PathLike = output_folder
+):
+
+    for filename in os.listdir(dir):
+        if filename.endswith(".gtf"):
+            file_path = os.path.join(dir, filename)
+            raw_data = read_gtf_file(file_path)
+            extracted_data = extract_key_attributes(raw_data)
+            transformed_data = transform_data(extracted_data)
+            out_file_path = os.path.join(output_folder, filename[:-4] + ".tsv")
+            os.makedirs(output_folder, exist_ok=True)
+            transformed_data.to_csv(
+                out_file_path, sep="\t", header=True, index=False
+            )
+            print(f"Transformed and saved: {out_file_path}")
+
+
+"""Main"""
 
 
 def main():
@@ -129,16 +154,7 @@ def main():
 
     download_gtf_files(args.release, args.species)
     unzip_gtf_files()
-
-    df = read_gtf_file(
-        os.path.join(temp_download_folder, "Cajanus_cajan.C.cajan_V1.0.56.gtf")
-    )
-
-    df = extract_key_attributes(df)
-
-    df = transform_data(df)
-
-    df.to_csv("test.csv", sep="\t", header=True, index=False)
+    transformation_recursion(temp_download_folder)
 
 
 if __name__ == "__main__":
