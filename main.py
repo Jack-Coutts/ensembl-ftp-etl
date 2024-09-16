@@ -14,9 +14,7 @@ default_ensembl_ftp_url = (
 temp_download_folder = os.path.abspath(
     os.path.expanduser("~/temp-ftp-downloads/")
 )
-output_folder = os.path.abspath(
-    os.path.expanduser("~/ensemble-ftp-etl-output/")
-)
+output_folder = os.path.abspath(os.path.expanduser("~/ensembl-ftp-etl-output/"))
 
 """Functions"""
 
