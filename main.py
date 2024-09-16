@@ -6,6 +6,8 @@ import pandas as pd
 from subprocess import run
 
 """Constants"""
+
+
 default_ensembl_ftp_url = (
     "ftp://ftp.ensemblgenomes.ebi.ac.uk/pub/plants/release-"
 )
@@ -81,6 +83,14 @@ def unzip_gtf_files(dir: str | os.PathLike = temp_download_folder):
 
 
 def read_gtf_file(file: str | os.PathLike) -> pd.DataFrame:
+    """
+    Read a GTF file into a pandas dataframe
+
+    Args:
+        file: Path to the GTF filename
+    Returns:
+        dataframe: Pandas dataframe containing the GTF data
+    """
 
     dataframe = pd.read_csv(
         file, sep="\t", comment="#", header=None, dtype={0: str}
@@ -101,6 +111,14 @@ def read_gtf_file(file: str | os.PathLike) -> pd.DataFrame:
 
 
 def extract_key_attributes(gtf_data: pd.DataFrame) -> pd.DataFrame:
+    """
+    Extract key attributes from the GTF data and add them as columns
+
+    Args:
+        gtf_data: Pandas dataframe containing the GTF dataframe
+    Returns:
+        gene_data: Pandas dataframe containing the additional columns
+    """
 
     # Select only the rows with "gene" feature
     gene_data = gtf_data[
@@ -118,6 +136,14 @@ def extract_key_attributes(gtf_data: pd.DataFrame) -> pd.DataFrame:
 
 
 def transform_data(gene_data: pd.DataFrame) -> pd.DataFrame:
+    """
+    Created a new dataframe with only the required columns
+
+    Args:
+        gene_data: Pandas dataframe containing the gene dataframe
+    Returns:
+        output_df: Pandas dataframe containing the required columns
+    """
 
     output_df = gene_data.loc[
         :, ["gene_id", "feature", "gene_biotype", "seqname", "source"]
@@ -128,6 +154,16 @@ def transform_data(gene_data: pd.DataFrame) -> pd.DataFrame:
 def transformation_recursion(
     dir: str | os.PathLike, ouput_file_path: str | os.PathLike = output_folder
 ):
+    """
+    Recursively transform all GTF files in the directory-prefix
+
+    Args:
+        dir: Directory containing GTF files
+        output_folder: Directory to save the transformed unzip_gtf_files
+    Returns:
+        None
+        * Transforms and saves the GTF files in the output_folder
+    """
 
     for filename in os.listdir(dir):
         if filename.endswith(".gtf"):
@@ -152,9 +188,15 @@ def main():
     parser.add_argument("--release", type=int, help="Ensembl release version")
     args = parser.parse_args()
 
-    download_gtf_files(args.release, args.species)
-    unzip_gtf_files()
-    transformation_recursion(temp_download_folder)
+    try:
+
+        download_gtf_files(args.release, args.species)
+        unzip_gtf_files()
+        transformation_recursion(temp_download_folder)
+        print("ETL process completed successfully")
+
+    except Exception as e:
+        print(f"Error occurred: {e}")
 
 
 if __name__ == "__main__":
