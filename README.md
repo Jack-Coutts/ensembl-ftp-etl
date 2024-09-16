@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This repo contains a Python script for extracting, transforming, and loading (ETL) gene information from [GTF](https://www.ensembl.org/info/website/upload/gff.html) files downloaded from the [Ensembl plants FTP server](https://ftp.ensemblgenomes.ebi.ac.uk/pub/plants/). The script was done as a timed task and completed in approx 2.5 hours. The task specifi
+This repo contains a Python script for extracting, transforming, and loading (ETL) gene information from [GTF](https://www.ensembl.org/info/website/upload/gff.html) files downloaded from the [Ensembl plants FTP server](https://ftp.ensemblgenomes.ebi.ac.uk/pub/plants/). The script was done as a timed task and completed in approx 2.5 hours.
 
 
 ## Features
@@ -77,7 +77,7 @@ The script uses several constants that **can**, but should not need to be, modif
 * Add more file-type compatability (e.g. GFF3)
 * Add more command line options (e.g. output to CSV or TSV, delete or keep downloaded GTF files)
 * Add better/more error handling
-* Imporve Speed/Efficiency
+* Improve Speed/Efficiency
 * Add more documentation
 * Create an executable for easy installtion for one time users
 * Add CLI as an easier UI (would be optional as worse for pipeline integration)
