@@ -1,8 +1,8 @@
 import os
 import argparse
 import gzip
-from os.path import abspath
 import shutil
+import pandas as pd
 from subprocess import run
 
 """Constants"""
@@ -75,6 +75,52 @@ def unzip_gtf_files(dir: str | os.PathLike = temp_download_folder):
             print(f"Unzipped and removed: {filename}")
 
 
+def read_gtf_file(file: str | os.PathLike) -> pd.DataFrame:
+
+    dataframe = pd.read_csv(
+        file, sep="\t", comment="#", header=None, dtype={0: str}
+    )
+    dataframe.columns = [
+        "seqname",
+        "source",
+        "feature",
+        "start",
+        "end",
+        "score",
+        "strand",
+        "frame",
+        "attribute",
+    ]
+
+    return dataframe
+
+
+def extract_key_attributes(gtf_data: pd.DataFrame) -> pd.DataFrame:
+
+    # Select only the rows with "gene" feature
+    gene_data = gtf_data[
+        gtf_data["feature"] == "gene"
+    ].copy()  # Create an explicit copy
+
+    # Regex for extracting attributes
+    gene_data.loc[:, "gene_id"] = gene_data["attribute"].str.extract(
+        r'gene_id\s*"(.+?)"'
+    )
+    gene_data.loc[:, "gene_biotype"] = gene_data["attribute"].str.extract(
+        r'gene_biotype\s*"(.+?)"'
+    )
+    return gene_data
+
+
+def transform_data(gene_data: pd.DataFrame) -> pd.DataFrame:
+
+    output_df = gene_data.loc[
+        :, ["gene_id", "feature", "gene_biotype", "seqname", "source"]
+    ]
+
+    return output_df
+
+
 def main():
     parser = argparse.ArgumentParser(description="tbd")
     parser.add_argument("--species", type=str, help="Ensembl species name")
@@ -83,6 +129,16 @@ def main():
 
     download_gtf_files(args.release, args.species)
     unzip_gtf_files()
+
+    df = read_gtf_file(
+        os.path.join(temp_download_folder, "Cajanus_cajan.C.cajan_V1.0.56.gtf")
+    )
+
+    df = extract_key_attributes(df)
+
+    df = transform_data(df)
+
+    df.to_csv("test.csv", sep="\t", header=True, index=False)
 
 
 if __name__ == "__main__":
