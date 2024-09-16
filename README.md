@@ -71,9 +71,9 @@ The you be informed of the location of the downloaded files and the output files
 
 The script uses several constants that **can**, but should not need to be, modified in the main.py file:
 
-`default_ensembl_ftp_url`: The base URL for the Ensembl FTP server
-`temp_download_folder`: The folder for downloaded files
-`output_folder`: Folder for the final output TSV files
+* `default_ensembl_ftp_url`: The base URL for the Ensembl FTP server
+* `temp_download_folder`: The folder for downloaded files
+* `output_folder`: Folder for the final output TSV files
 
 
 ## To Do / Next Steps
